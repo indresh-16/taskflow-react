@@ -1,6 +1,6 @@
-import TaskForm from "./TaskForm";
-import TaskItem from "./TaskItem";
-import TaskList from "./TaskList";
+import TaskForm from "../Task/TaskForm";
+import TaskItem from "../Task/TaskItem";
+import TaskList from "../Task/TaskList";
 
 export default function Header(){
     return <>
