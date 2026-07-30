@@ -1,8 +1,8 @@
-export default function TaskItem({task,deleTask}){
+export default function TaskItem({task,deleTask,toggleTask}){
     return <>
             <div style={{display:"flex", alignSelf:"center"}}>
-                 <input type="checkbox" value = {task}/> <p>{task}</p>
-                 <button onClick={() => deleTask(task)}>🗑️</button>
+                 <input type="checkbox" checked={task.completed} onChange={() => toggleTask(task)} value = {task}/> <p>{task.text}</p>
+                 <button onClick={() => deleTask(clickedtask)}>🗑️</button>
                     
 
         </div>
