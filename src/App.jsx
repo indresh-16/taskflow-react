@@ -9,7 +9,7 @@ import TaskForm from './components/Task/TaskForm'
 function App() {
   const [tasks,setTasks] = useState([]);
   function addTask(inputValue){
-     setTasks([...tasks,{text:inputValue,completed:!false}])
+     setTasks([...tasks,{text:inputValue,completed:false}])
   }
   function deleTask(TasktoDelete){
     setTasks(
