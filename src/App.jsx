@@ -11,21 +11,21 @@ function App() {
   function addTask(inputValue){
      setTasks([...tasks,{text:inputValue,completed:false}])
   }
-  function deleTask(TasktoDelete){
-    setTasks(
-      tasks.filter((task) => task !== TasktoDelete)
-    )
-  }
-  function toggleTask(clickedtask){
+  function toggleTask(clickedTask){
     setTasks(
       tasks.map((task) => {
-        if(task.text === clickedtask.text){
+        if(task.text === clickedTask.text){
           return {
             ...task,completed:!task.completed
           };
         }
         return task
       })
+    )
+  }
+    function deleTask(TasktoDelete){
+    setTasks(
+      tasks.filter((task) => task.text !== TasktoDelete.text)
     )
   }
   return <>
