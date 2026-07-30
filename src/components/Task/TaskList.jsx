@@ -1,5 +1,8 @@
-export default function TaskList(){
+import TaskItem from "./TaskItem"
+export default function TaskList({tasks}){
     return <>
-        <h2>TaskList</h2>
+        {tasks.map((item,index) => (
+            <TaskItem key={index} task={item}/>
+        ))}
     </>
 }

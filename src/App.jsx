@@ -3,13 +3,20 @@ import { useState } from 'react'
 import './App.css'
 import Header from './components/Header/Header'
 import TaskList from './components/Task/TaskList'
-import TaskItem from './components/Task/TaskItem'
 import TaskForm from './components/Task/TaskForm'
 
-function App() {
+
+function App({inputValue}) {
+  const [tasks,setTasks] = useState([]);
+  function addTask(inputValue){
+     setTasks([...tasks,inputValue])
+  }
+
   return <>
-      <Header/>
-  </> 
+    <Header/>
+    <TaskForm addTask={addTask}/>
+    <TaskList tasks={tasks}/>
+  </>
 }
 
 export default App

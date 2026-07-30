@@ -1,5 +1,7 @@
-export default function TaskItem(){
+export default function TaskItem({task}){
     return <>
-        <h2>TaskItem</h2>
+            <div style={{display:"flex", alignSelf:"center"}}>
+                 <input type="checkbox"/> <p>{task}</p>
+        </div>
     </>
 }
