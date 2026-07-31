@@ -4,6 +4,10 @@ export default function TaskForm({addTask}){
 const [inputValue,setInputValue] = useState("");
 function handleSubmit(e){
     e.preventDefault();
+    if(inputValue.trim() === ""){
+        //showPopup("fill the form")
+        return ;
+    }
     addTask(inputValue)
     setInputValue("")
 }

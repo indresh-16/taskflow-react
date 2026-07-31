@@ -16,7 +16,8 @@ function App() {
       tasks.map((task) => {
         if(task.text === clickedTask.text){
           return {
-            ...task,completed:!task.completed
+            ...task,
+            completed:!task.completed
           };
         }
         return task
@@ -33,6 +34,7 @@ function App() {
     <TaskForm addTask={addTask}/>
     <TaskList tasks={tasks}  deleTask ={deleTask} toggleTask={toggleTask}/>
   </>
+  //return <h1 className='text-red-500 text-5xl font-bold'>Tailwindcss</h1>
 }
 
 export default App
