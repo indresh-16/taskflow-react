@@ -30,11 +30,18 @@ function App() {
     )
   }
   return <>
-    <Header/>
-    <TaskForm addTask={addTask}/>
-    <TaskList tasks={tasks}  deleTask ={deleTask} toggleTask={toggleTask}/>
+    <div className=' w-screen min-h-screen flex flex-col items-center justify-center'>
+        <div className=' bg-white p-6 pt-8 pb-7 rounded-lg shadow-lg w-96  '>
+          <Header/>
+          <TaskForm addTask={addTask}/>
+          <TaskList tasks={tasks} 
+          deleTask ={deleTask}
+          toggleTask={toggleTask}
+          />
+        </div>
+    </div>
   </>
   //return <h1 className='text-red-500 text-5xl font-bold'>Tailwindcss</h1>
-}
+} 
 
 export default App

@@ -4,7 +4,10 @@ import TaskList from "../Task/TaskList";
 
 export default function Header(){
     return <>
-        <h1 className="text-4xl font-bold text-blue-600">✅ Task Flow</h1>
-        <p>Manage your daily tasks easily</p>
+    <div className="text-center" >
+        <h1 className="text-4xl font-bold text-center mb-3  text-gray-900">✅ TaskFlow</h1>
+        <p className="text-2xl">Manage your daily tasks easily</p>
+    </div>
+        
     </>
 }
