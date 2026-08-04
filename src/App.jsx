@@ -33,12 +33,21 @@ function App() {
   const total = tasks.length
   const remaining = tasks.filter( (task) => !task.completed).length
   const completed = total-remaining;
+
+  /* used for filter buttons useState*/const [Filter,setFilter] = useState("all");
+  let filteredTask =  tasks;
+  if(Filter === 'active'){
+    filteredTask= tasks.filter( (task) => !task.completed)
+  }
+  if (Filter === 'completed') {
+    filteredTask = tasks.filter((task) => task.completed)
+  }
   return <>
     <div className=' w-screen min-h-screen flex flex-col items-center justify-center'>
         <div className=' bg-white p-6 pt-8 pb-7 rounded-lg shadow-lg w-96  '>
           <Header/>
           <TaskForm addTask={addTask}/>
-          <TaskList tasks={tasks} 
+          <TaskList tasks={filteredTask} 
           deleTask ={deleTask}
           toggleTask={toggleTask}
           />
@@ -47,6 +56,13 @@ function App() {
           remaining={remaining}
           completed={completed}
           />
+
+          {/* filter buttons*/}
+          <div className='flex justify-around mt-3 '>
+            <button onClick={() => setFilter("all")} >All</button>
+            <button onClick={() => setFilter("active")}>Filter</button>
+            <button onClick={() => setFilter("completed")}>Completed</button>
+          </div> 
         </div>
 
     </div>
