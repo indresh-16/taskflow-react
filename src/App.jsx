@@ -34,7 +34,8 @@ function App() {
   const remaining = tasks.filter( (task) => !task.completed).length
   const completed = total-remaining;
 
-  /* used for filter buttons useState*/const [Filter,setFilter] = useState("all");
+  /* used for filter buttons useState*/
+  const [Filter,setFilter] = useState("all");
   let filteredTask =  tasks;
   if(Filter === 'active'){
     filteredTask= tasks.filter( (task) => !task.completed)
@@ -59,9 +60,9 @@ function App() {
 
           {/* filter buttons*/}
           <div className='flex justify-around mt-3 '>
-            <button onClick={() => setFilter("all")} >All</button>
-            <button onClick={() => setFilter("active")}>Filter</button>
-            <button onClick={() => setFilter("completed")}>Completed</button>
+            <button onClick={() => setFilter("all")} className='border-1 font-semibold pl-4 pr-4 active:scale-95 cursor-pointer focus:right-2 rounded-lg' >All</button>
+            <button onClick={() => setFilter("active")} className='border-1 font-semibold pl-4 pr-4 active:scale-95 cursor-pointer focus:right-2 rounded-lg'>Filter</button>
+            <button onClick={() => setFilter("completed")} className='border-1 font-semibold pl-4 pr-4 active:scale-95 cursor-pointer focus:right-2 rounded-lg'>Completed</button>
           </div> 
         </div>
 
