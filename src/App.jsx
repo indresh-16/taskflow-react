@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState ,useEffect } from 'react'
 
 import './App.css'
 import Header from './components/Header/Header'
@@ -43,6 +43,19 @@ function App() {
   if (Filter === 'completed') {
     filteredTask = tasks.filter((task) => task.completed)
   }
+useEffect(() => {
+  const storedValue = localStorage.getItem("tasks")
+  console.log("stored",storedValue);
+  const parseTask = JSON.parse(storedValue || "[]")
+  setTasks(parseTask)
+  console.log("parsed",parseTask)
+},[])
+
+useEffect( () =>{
+  localStorage.setItem("tasks",JSON.stringify(tasks));
+},[tasks])
+
+
   return <>
     <div className=' w-screen min-h-screen flex flex-col items-center justify-center'>
         <div className=' bg-white p-6 pt-8 pb-7 rounded-lg shadow-lg w-96  '>
