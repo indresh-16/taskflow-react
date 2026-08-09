@@ -23,7 +23,6 @@ export default function Login(){
     }
     return <>
     <div >
-        {loading && <p>{loading}</p>}
         <div className="flex h-64 flex-col justify-center">
             <form onSubmit={handleLogin} className="flex flex-col  gap-1 border-1"><h1>Login</h1>
                 <label htmlFor="">Email:<input type="email" placeholder="email" value={email} onChange={(e) => {setEmail(e.target.value);setError("")}}/></label>
@@ -31,6 +30,8 @@ export default function Login(){
                 {error && <p>{error}</p>}
                 <button type="submit" className="border-1">Login</button> 
             </form>
+        {loading && <p>{loading}</p>}
+            
         </div>
 
        
