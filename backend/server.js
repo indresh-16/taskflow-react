@@ -1,0 +1,18 @@
+const express = require("express");
+const app = express();
+
+app.use(express.json());
+
+app.post("/login",(req,res) => {
+    const {email,password} = req.body;
+    console.log("Email",email)
+    console.log("password",password)
+
+    res.json({
+        message:"Login request received"
+    });
+})
+
+app.listen(5000,() =>{
+    console.log("server running on http://localhost:5000")
+})
