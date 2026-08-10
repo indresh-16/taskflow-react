@@ -19,7 +19,22 @@ export default function Login(){
         setError("");
         console.log(email,password)
         setLoading(true)
-        
+
+        fetch("http://localhost:5000/login",{
+            method:"POST",
+            headers:{
+                "content-type":"application/json"
+            },
+            body:JSON.stringify({
+                email:email,
+                password:password
+            })
+
+        })
+        .then(response => response.json())
+        .then((data) => {
+            console.log(data.message)
+        });
     }
     return <>
     <div >
@@ -28,7 +43,7 @@ export default function Login(){
                 <label htmlFor="">Email:<input type="email" placeholder="email" value={email} onChange={(e) => {setEmail(e.target.value);setError("")}}/></label>
                 <label htmlFor="">Password:<input type="password" placeholder="password" value={password} onChange={(e) => {setPassword(e.target.value);setError("")}}/></label>
                 {error && <p>{error}</p>}
-                <button type="submit" className="border-1">Login</button> 
+                <button type="submit" className="border-1 active:scale-95">Login</button> 
             </form>
         {loading && <p>{loading}</p>}
             

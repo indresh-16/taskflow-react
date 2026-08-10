@@ -1,6 +1,9 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 
+
+app.use(cors());
 app.use(express.json());
 
 app.post("/login",(req,res) => {
@@ -11,6 +14,10 @@ app.post("/login",(req,res) => {
     res.json({
         message:"Login request received"
     });
+})
+.then(response => response.json())
+.then(data => {
+    console.log(data)
 })
 
 app.listen(5000,() =>{
