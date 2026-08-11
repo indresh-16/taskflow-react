@@ -5,7 +5,7 @@ export default function Login(){
     const [password,setPassword] = useState("")
     const [error,setError] = useState("")
     const [loading,setLoading] =useState(false)
-    function handleLogin(e){
+    async function handleLogin(e){
         e.preventDefault();
         if(email === "" && password === ""){
             return setError("Type both credentials");
@@ -20,7 +20,7 @@ export default function Login(){
         console.log(email,password)
         setLoading(true)
 
-        fetch("http://localhost:5000/login",{
+        const response= await fetch("http://localhost:5000/login",{
             method:"POST",
             headers:{
                 "content-type":"application/json"
@@ -31,10 +31,8 @@ export default function Login(){
             })
 
         })
-        .then(response => response.json())
-        .then((data) => {
-            console.log(data.message)
-        });
+        const data = await response.json();
+        console.log(data.message);
     }
     return <>
     <div >
