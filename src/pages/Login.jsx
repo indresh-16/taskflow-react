@@ -19,7 +19,7 @@ export default function Login(){
         setError("");
         console.log(email,password)
         setLoading(true)
-
+        try{
         const response= await fetch("http://localhost:5000/login",{
             method:"POST",
             headers:{
@@ -32,7 +32,15 @@ export default function Login(){
 
         })
         const data = await response.json();
+        if( !response.ok){
+            setError(data.message);
+            return;
+        }
         console.log(data.message);
+        } catch(error){
+            setError("Unable to connect to server")
+        }
+
     }
     return <>
     <div >
