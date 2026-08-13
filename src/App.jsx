@@ -5,7 +5,7 @@ import './App.css'
 import Dashboard from './pages/Dashboard'
 import Tasks from './pages/Tasks';
 import Login from './pages/Login';
-
+import Register from './pages/Register';
 
 function App() {
   const [tasks,setTasks] = useState([]);
@@ -65,6 +65,10 @@ useEffect( () => {
               <Route
                 path='/login'
                 element={<Login/>}
+              />
+              <Route
+                  path='/register'
+                  element = {<Register/>}
               />
             <Route path="/" element={<Dashboard />} />
 

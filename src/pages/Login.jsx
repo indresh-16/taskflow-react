@@ -1,4 +1,6 @@
 import { useState } from "react"
+import { Link } from "react-router-dom";
+
 
 export default function Login(){
     const [email,setEmail] = useState("");
@@ -50,6 +52,10 @@ export default function Login(){
                 <label htmlFor="">Password:<input type="password" placeholder="password" value={password} onChange={(e) => {setPassword(e.target.value);setError("")}}/></label>
                 {error && <p>{error}</p>}
                 <button type="submit" className="border-1 active:scale-95">Login</button> 
+                <p>
+                    Don't have an account?
+                    <Link to="/register"> Register</Link>
+                </p>
             </form>
         {loading && <p>{loading}</p>}
             
