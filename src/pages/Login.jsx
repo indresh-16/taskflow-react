@@ -1,12 +1,14 @@
 import { useState } from "react"
 import { Link } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
 
 export default function Login(){
+    const navigate = useNavigate();
     const [email,setEmail] = useState("");
     const [password,setPassword] = useState("")
     const [error,setError] = useState("")
     const [loading,setLoading] =useState(false)
+    const [message,setmessage] = useState("")
     async function handleLogin(e){
         e.preventDefault();
         if(email === "" && password === ""){
@@ -38,10 +40,14 @@ export default function Login(){
             setError(data.message);
             return;
         }
-        console.log(data.message);
+        if(response.ok){
+            navigate("/tasks")
+        }
+        setmessage(data.message)
         } catch(error){
             setError("Unable to connect to server")
         }
+
 
     }
     return <>
@@ -58,6 +64,7 @@ export default function Login(){
                 </p>
             </form>
         {loading && <p>{loading}</p>}
+        {message && <p>{message}</p>}
             
         </div>
 

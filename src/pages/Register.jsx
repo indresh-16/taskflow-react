@@ -33,7 +33,7 @@ export default function Register() {
         const data = await response.json();
         setMessage(data.message);
         if (response.ok) {
-            console.log("Navigating...")
+            setMessage(data.message)
             navigate("/login");
         }
     }

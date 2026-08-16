@@ -1,22 +1,34 @@
-import TaskItem from "./TaskItem"
-export default function TaskList({tasks,deleTask,toggleTask,filter}){
-   /* if(tasks.length === 0){
-        return 
-    }*/
+import TaskItem from "./TaskItem";
 
-    if(tasks.length === 0){
-        if(filter === "completed"){
-            return <div className="ml-3 mt-2 font-semibold"><p>No completed tasks !</p></div>
-        }
-        if(filter === "active"){
-            return <div className="ml-3 mt-2 font-semibold"><p>No Active tasks !</p></div>
+export default function TaskList({
+  tasks,
+  deleTask,
+  toggleTask,
+  filter,
+}) {
 
-        }
-        return <div className="ml-3 mt-2 font-semibold"><p>No tasks yet. Add a task to get started!</p></div>
+  if (tasks.length === 0) {
+    if (filter === "completed") {
+      return <p>No completed tasks!</p>;
     }
-    return <>
-        {tasks.map((item,index) => (
-            <TaskItem key={index} task={item} deleTask={deleTask} toggleTask={toggleTask}/>
-        ))}
+
+    if (filter === "active") {
+      return <p>No active tasks!</p>;
+    }
+
+    return <p>No tasks yet. Add a task to get started!</p>;
+  }
+
+  return (
+    <>
+      {tasks.map((task) => (
+        <TaskItem
+          key={task.id}
+          task={task}
+          deleTask={deleTask}
+          toggleTask={toggleTask}
+        />
+      ))}
     </>
+  );
 }
