@@ -34,11 +34,24 @@ const router = express.Router();
                 password,
                 results[0].password_hashed
             );
+
             if (!isMatch) {
                 return res.status(401).json({
                     message: "Invalid email or password"
                 });
             }
+
+
+            const token = jwt.sign(
+                {
+                    id:user.id,
+                    email:user.email
+                },
+                process.env.JWT_SECERT,
+                {
+                    expiresIn:"1hr"
+                }
+            )
             return res.status(200).json({
                 message: "Login successful"
             });
@@ -82,7 +95,8 @@ async function register(req, res)  {
                     }
 
                     return res.status(201).json({
-                        message: "Registration successful"
+                        message: "Registration successful",
+                        token:token
                     });
                 }
 

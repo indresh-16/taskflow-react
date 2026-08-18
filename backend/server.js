@@ -1,4 +1,6 @@
 const express = require("express");
+require("dotenv").config();
+process.env.JWT_SECRET
 const app = express();
 const cors = require("cors")
 const bcrypt = require("bcrypt")
