@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import "./App.css";
+
 import Dashboard from "./pages/Dashboard";
 import Tasks from "./pages/Tasks";
 import Login from "./pages/Login";
@@ -11,90 +12,123 @@ function App() {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState("all");
 
-  // GET existing tasks from MySQL
   useEffect(() => {
-    fetch("http://localhost:5000/tasks")
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      return;
+    }
+
+    fetch("http://localhost:5000/tasks", {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
-        console.log("EXISTING TASKS:", data);
-        setTasks(data);
+        if (Array.isArray(data)) {
+          setTasks(data);
+        } else {
+          setTasks([]);
+        }
       })
       .catch((error) => {
-        console.log("GET ERROR:", error);
+        console.error("GET ERROR:", error);
       });
   }, []);
 
-  // CREATE
   function addTask(inputValue) {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      return;
+    }
+
     fetch("http://localhost:5000/tasks", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
       },
       body: JSON.stringify({
         text: inputValue,
       }),
     })
       .then((response) => response.json())
-      .then((newTask) => {
-        console.log("NEW TASK:", newTask);
+      .then((data) => {
+        if (!data || !data.id) {
+          return;
+        }
 
-        // Add ONLY the server response
-        setTasks((prevTasks) => [...prevTasks, newTask]);
+        setTasks((prevTasks) => [...prevTasks, data]);
       })
       .catch((error) => {
-        console.log("ADD ERROR:", error);
+        console.error("ADD TASK ERROR:", error);
       });
   }
 
-  // UPDATE
   function toggleTask(clickedTask) {
+
+    const token = localStorage.getItem("token");
+
     const newCompleted = !Boolean(clickedTask.completed);
 
     fetch(`http://localhost:5000/tasks/${clickedTask.id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        completed: newCompleted,
-      }),
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            completed: newCompleted
+        })
     })
-      .then((response) => response.json())
-      .then(() => {
-        setTasks((prevTasks) =>
-          prevTasks.map((task) =>
-            task.id === clickedTask.id
-              ? {
-                  ...task,
-                  completed: newCompleted,
-                }
-              : task
-          )
+    .then(response => response.json())
+    .then(data => {
+
+        console.log("UPDATE RESPONSE:", data);
+
+        setTasks(prevTasks =>
+            prevTasks.map(task =>
+                task.id === clickedTask.id
+                    ? {
+                        ...task,
+                        completed: newCompleted
+                    }
+                    : task
+            )
         );
-      })
-      .catch((error) => {
+    })
+    .catch(error => {
         console.log("UPDATE ERROR:", error);
-      });
-  }
+    });
+}
 
-  // DELETE
   function deleTask(taskId) {
-    fetch(`http://localhost:5000/tasks/${taskId}`, {
-      method: "DELETE",
-    })
-      .then((response) => response.json())
-      .then(() => {
-        setTasks((prevTasks) =>
-          prevTasks.filter((task) => task.id !== taskId)
-        );
-      })
-      .catch((error) => {
-        console.log("DELETE ERROR:", error);
-      });
-  }
 
-  // FILTER
+    const token = localStorage.getItem("token");
+
+    fetch(`http://localhost:5000/tasks/${taskId}`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+
+        console.log("DELETE RESPONSE:", data);
+
+        setTasks(prevTasks =>
+            prevTasks.filter(task => task.id !== taskId)
+        );
+    })
+    .catch(error => {
+        console.log("DELETE ERROR:", error);
+    });
+}
+
   const filteredTask = tasks.filter((task) => {
     if (filter === "active") {
       return !Boolean(task.completed);
@@ -108,41 +142,28 @@ function App() {
   });
 
   return (
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route
-            path='/login'
-            element={<Login />}
-          />
-          <Route
-            path='/register'
-            element={<Register />}
-          />
-          <Route path="/" element={<Dashboard />} />
-
-          <Route
-            path="/tasks"
-            element={
-              <Tasks
-                addTask={addTask}
-                tasks={tasks}
-                filteredTask={filteredTask}
-                deleTask={deleTask}
-                toggleTask={toggleTask}
-                filter={filter}
-                setFilter={setFilter}
-              />
-            }
-          />
-
-        </Routes>
-      </BrowserRouter></>
-
-
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/" element={<Dashboard />} />
+        <Route
+          path="/tasks"
+          element={
+            <Tasks
+              addTask={addTask}
+              tasks={tasks}
+              filteredTask={filteredTask}
+              deleTask={deleTask}
+              toggleTask={toggleTask}
+              filter={filter}
+              setFilter={setFilter}
+            />
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
-  //return <h1 className='text-red-500 text-5xl font-bold'>Tailwindcss</h1>
-
-
 }
-export default App
+
+export default App;
