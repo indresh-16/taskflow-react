@@ -1,109 +1,126 @@
 const db = require("../config/db");
-const express = require("express");
 
-const router = express.Router();
+const getTasks = (req, res) => {
 
-function getTasks(req, res) {
+    const userId = req.user.id;
+
     db.query(
-        "SELECT * FROM tasks",
+        "SELECT * FROM tasks WHERE user_id = ? ORDER BY id ASC",
+        [userId],
         (err, results) => {
 
             if (err) {
+                console.log("GET TASK ERROR:", err);
                 return res.status(500).json({
-                    message: "Database error"
+                    message: "Failed to get tasks"
                 });
             }
 
-            console.log("MYSQL RESULTS:", results);
-
-            return res.status(200).json(results);
+            res.json(results);
         }
     );
-}
+};
 
-function createTasks(req, res) {
+const createTasks = (req, res) => {
 
     const { text } = req.body;
+    const userId = req.user.id;
 
-    const sql = "INSERT INTO tasks (text, completed) VALUES (?, ?)";
+    if (!text || text.trim() === "") {
+        return res.status(400).json({
+            message: "Task text is required"
+        });
+    }
 
     db.query(
-        sql,
-        [text, false],
+        "INSERT INTO tasks (text, completed, user_id) VALUES (?, ?, ?)",
+        [text, 0, userId],
         (err, result) => {
 
             if (err) {
-                console.log(err);
+                console.log("CREATE TASK ERROR:", err);
 
                 return res.status(500).json({
-                    message: "Database error"
+                    message: "Failed to create task"
                 });
             }
 
-            const newTask = {
+            res.status(201).json({
                 id: result.insertId,
                 text: text,
-                completed: false
-            };
-
-            console.log("NEW TASK:", newTask);
-
-            return res.status(201).json(newTask);
-        }
-    );
-}
-
-function updateTasks(req,res){
-    const {id} = req.params;
-    const {completed} = req.body;
-    db.query(
-        "UPDATE tasks SET completed = ? where id = ?",
-        [completed,id],
-        (err,results) => {
-            if(err){
-                console.log(err)
-                return res.status(500).json({
-                    message:"Database error",
-                });
-            }
-            console.log("Task Updated:",results)
-            return res.status(201).json({
-                message:"Task updated successfully"
+                completed: false,
+                user_id: userId
             });
         }
-    )
+    );
+};
 
-}
+const updateTasks = (req, res) => {
 
-function deleteTask(req, res) {
-  const taskId = req.params.id;
+    const taskId = req.params.id;
+    const { completed } = req.body;
+    const userId = req.user.id;
 
-  console.log(" BACKEND DELETE");
-  console.log("ID:", taskId);
+    db.query(
+        `UPDATE tasks
+         SET completed = ?
+         WHERE id = ? AND user_id = ?`,
+        [completed, taskId, userId],
+        (err, result) => {
 
-  db.query(
-    "DELETE FROM tasks WHERE id = ?",
-    [taskId],
-    (err, result) => {
-      if (err) {
-        console.log("MYSQL DELETE ERROR:", err);
+            if (err) {
+                console.log("UPDATE TASK ERROR:", err);
 
-        return res.status(500).json({
-          message: "Database error",
-        });
-      }
+                return res.status(500).json({
+                    message: "Failed to update task"
+                });
+            }
 
-      console.log("MYSQL RESULT:", result);
+            if (result.affectedRows === 0) {
+                return res.status(404).json({
+                    message: "Task not found"
+                });
+            }
 
-      return res.status(200).json({
-        message: "Task deleted successfully",
-      });
-    }
-  );
-}
+            res.json({
+                message: "Task updated successfully"
+            });
+        }
+    );
+};
+const deleteTask = (req, res) => {
+
+    const taskId = req.params.id;
+    const userId = req.user.id;
+
+    db.query(
+        "DELETE FROM tasks WHERE id = ? AND user_id = ?",
+        [taskId, userId],
+        (err, result) => {
+
+            if (err) {
+                console.log("DELETE TASK ERROR:", err);
+
+                return res.status(500).json({
+                    message: "Failed to delete task"
+                });
+            }
+
+            if (result.affectedRows === 0) {
+                return res.status(404).json({
+                    message: "Task not found"
+                });
+            }
+
+            res.json({
+                message: "Task deleted successfully"
+            });
+        }
+    );
+};
 module.exports = {
-    getTasks,
-    createTasks,
-    updateTasks,
-    deleteTask
+  getTasks,
+  createTasks,
+  updateTasks,
+  deleteTask,
 };

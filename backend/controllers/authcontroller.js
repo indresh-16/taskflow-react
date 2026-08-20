@@ -1,115 +1,86 @@
-const express = require("express");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const db = require("../config/db");
 
-const router = express.Router();
+async function login(req, res) {
+  const { email, password } = req.body;
 
+  if (!email || !password) {
+    return res.status(400).json({ message: "Email and password are required" });
+  }
 
+  db.query(
+    "SELECT * FROM users WHERE email = ?",
+    [email],
+    async (err, results) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Database error" });
+      }
 
- async function login(req, res) {
-    const { email, password } = req.body
+      if (results.length === 0) {
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
 
-    db.query(
-        "SELECT * FROM users WHERE email = ?",
-        [email],
-        async (err, results) => {
-            if (err) {
-                console.log(err)
-                return res.status(500).json({
-                    message: "Database error"
-                })
-            }
+      const user = results[0];
+      const isMatch = await bcrypt.compare(password, user.password_hashed);
 
-            if (results.length === 0) {
-                return res.status(401).json({
-                    message: "Invalid email or password"
-                })
-            }
-            console.log("EMAIL FROM REQUEST:", email);
-            console.log("PASSWORD FROM REQUEST:", password);
-            console.log("USER FROM DATABASE:", results[0]);
-            console.log("HASH FROM DATABASE:", results[0].password_hashed);
+      if (!isMatch) {
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
 
-            const isMatch = await bcrypt.compare(
-                password,
-                results[0].password_hashed
-            );
+      const token = jwt.sign(
+        { id: user.id, email: user.email },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" },
+      );
 
-            if (!isMatch) {
-                return res.status(401).json({
-                    message: "Invalid email or password"
-                });
-            }
+      return res.status(200).json({
+        message: "Login successful",
+        token,
+      });
+    },
+  );
+}
 
+async function register(req, res) {
+  const { email, password } = req.body;
 
-            const token = jwt.sign(
-                {
-                    id:user.id,
-                    email:user.email
-                },
-                process.env.JWT_SECERT,
-                {
-                    expiresIn:"1hr"
-                }
-            )
-            return res.status(200).json({
-                message: "Login successful"
-            });
+  if (!email || !password) {
+    return res.status(400).json({ message: "Email and password are required" });
+  }
 
-        })
-};
+  db.query(
+    "SELECT * FROM users WHERE email = ?",
+    [email],
+    async (err, results) => {
+      if (err) {
+        return res.status(500).json({ message: "Database Error" });
+      }
 
-async function register(req, res)  {
-    const { email, password } = req.body;
-    console.log("eamil:", email);
-    console.log("password:", password)
-    db.query(
-        "SELECT * FROM users WHERE email = ?",
-        [email],
-        async (err, results) => {
-            if (err) {
-                return res.status(500).json({
-                    message: "Database Error"
-                });
-            }
+      if (results.length > 0) {
+        return res.status(409).json({ message: "User already registered" });
+      }
 
-            if (results.length > 0) {
-                return res.status(409).json({
-                    message: "User already registered"
-                });
-            }
+      const passwordHash = await bcrypt.hash(password, 10);
 
-            const passwordHash = await bcrypt.hash(password, 10)
-            console.log("password:", password)
-            console.log("Password Hash:", passwordHash);
+      db.query(
+        "INSERT INTO users (email, password_hashed) VALUES(?, ?)",
+        [email, passwordHash],
+        (insertErr) => {
+          if (insertErr) {
+            console.error(insertErr);
+            return res.status(500).json({ message: "Failed to save user" });
+          }
 
-            db.query(
-                "INSERT INTO users (email,password_hashed) VALUES(?,?)",
-                [email, passwordHash],
-                (err, results) => {
-                    if (err) {
-                        console.log(err)
-                        return res.status(500).json({
-                            message: "Failed to connect"
-                        });
-                    }
-
-                    return res.status(201).json({
-                        message: "Registration successful",
-                        token:token
-                    });
-                }
-
-            )
-
-        }
-
-    )
-
-
+          return res.status(201).json({ message: "Registration successful" });
+        },
+      );
+    },
+  );
 }
 
 module.exports = {
-    login,
-    register
+  login,
+  register,
 };
