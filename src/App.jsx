@@ -12,63 +12,91 @@ function App() {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState("all");
 
-  useEffect(() => {
+
+useEffect(() => {
+    const loadTasks = () => {
+
+        const token = localStorage.getItem("token");
+
+        console.log("TASK TOKEN:", token);
+
+        if (!token || token === "null" || token === "undefined") {
+            console.log("No valid JWT. Skipping tasks request.");
+            setTasks([]);
+            return;
+        }
+
+        fetch("http://localhost:5000/tasks", {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+
+            console.log("TASK RESPONSE:", data);
+
+            if (!Array.isArray(data)) {
+                console.log("TASK ERROR:", data);
+                setTasks([]);
+                return;
+            }
+
+            setTasks(data);
+        })
+        .catch(error => {
+            console.log("GET ERROR:", error);
+            setTasks([]);
+        });
+    };
+
+    loadTasks();
+}, []);
+
+function addTask(inputValue) {
+
     const token = localStorage.getItem("token");
 
+    console.log("========== ADD TASK ==========");
+    console.log("TOKEN:", token);
+    console.log("TEXT:", inputValue);
+
     if (!token) {
-      return;
+        console.log("❌ No JWT found");
+        return;
     }
 
     fetch("http://localhost:5000/tasks", {
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + token,
-      },
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            text: inputValue
+        })
     })
-      .then((response) => response.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setTasks(data);
-        } else {
-          setTasks([]);
-        }
-      })
-      .catch((error) => {
-        console.error("GET ERROR:", error);
-      });
-  }, []);
+    .then(response => response.json())
+    .then(data => {
 
-  function addTask(inputValue) {
-    const token = localStorage.getItem("token");
+        console.log("ADD RESPONSE:", data);
 
-    if (!token) {
-      return;
-    }
-
-    fetch("http://localhost:5000/tasks", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-      body: JSON.stringify({
-        text: inputValue,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (!data || !data.id) {
-          return;
+        if (!data.id) {
+            console.log("❌ TASK NOT CREATED:", data);
+            return;
         }
 
-        setTasks((prevTasks) => [...prevTasks, data]);
-      })
-      .catch((error) => {
-        console.error("ADD TASK ERROR:", error);
-      });
-  }
+        setTasks(prevTasks => [
+            ...prevTasks,
+            data
+        ]);
+    })
+    .catch(error => {
+        console.log("ADD ERROR:", error);
+    });
+}
 
-  function toggleTask(clickedTask) {
+function toggleTask(clickedTask) {
 
     const token = localStorage.getItem("token");
 
@@ -105,9 +133,11 @@ function App() {
     });
 }
 
-  function deleTask(taskId) {
+function deleTask(taskId) {
 
     const token = localStorage.getItem("token");
+
+    console.log("DELETE ID:", taskId);
 
     fetch(`http://localhost:5000/tasks/${taskId}`, {
         method: "DELETE",
@@ -128,7 +158,6 @@ function App() {
         console.log("DELETE ERROR:", error);
     });
 }
-
   const filteredTask = tasks.filter((task) => {
     if (filter === "active") {
       return !Boolean(task.completed);

@@ -11,6 +11,7 @@ const getTasks = (req, res) => {
 
             if (err) {
                 console.log("GET TASK ERROR:", err);
+
                 return res.status(500).json({
                     message: "Failed to get tasks"
                 });
@@ -24,37 +25,38 @@ const getTasks = (req, res) => {
 const createTasks = (req, res) => {
 
     const { text } = req.body;
-    const userId = req.user.id;
 
-    if (!text || text.trim() === "") {
-        return res.status(400).json({
-            message: "Task text is required"
-        });
-    }
+    console.log("========== CREATE TASK ==========");
+    console.log("REQ.USER:", req.user);
+    console.log("USER ID:", req.user?.id);
+    console.log("TEXT:", text);
+
+    const userId = req.user.id;
 
     db.query(
         "INSERT INTO tasks (text, completed, user_id) VALUES (?, ?, ?)",
-        [text, 0, userId],
+        [text, false, userId],
         (err, result) => {
 
             if (err) {
-                console.log("CREATE TASK ERROR:", err);
+                console.log("CREATE ERROR:", err);
 
                 return res.status(500).json({
                     message: "Failed to create task"
                 });
             }
 
+            console.log("INSERTED USER ID:", userId);
+
             res.status(201).json({
                 id: result.insertId,
-                text: text,
+                text,
                 completed: false,
                 user_id: userId
             });
         }
     );
 };
-
 const updateTasks = (req, res) => {
 
     const taskId = req.params.id;
@@ -69,7 +71,7 @@ const updateTasks = (req, res) => {
         (err, result) => {
 
             if (err) {
-                console.log("UPDATE TASK ERROR:", err);
+                console.log("UPDATE ERROR:", err);
 
                 return res.status(500).json({
                     message: "Failed to update task"
@@ -78,7 +80,7 @@ const updateTasks = (req, res) => {
 
             if (result.affectedRows === 0) {
                 return res.status(404).json({
-                    message: "Task not found"
+                    message: "Task not found or not yours"
                 });
             }
 
@@ -88,6 +90,8 @@ const updateTasks = (req, res) => {
         }
     );
 };
+
+
 const deleteTask = (req, res) => {
 
     const taskId = req.params.id;
@@ -99,7 +103,7 @@ const deleteTask = (req, res) => {
         (err, result) => {
 
             if (err) {
-                console.log("DELETE TASK ERROR:", err);
+                console.log("DELETE ERROR:", err);
 
                 return res.status(500).json({
                     message: "Failed to delete task"
@@ -108,7 +112,7 @@ const deleteTask = (req, res) => {
 
             if (result.affectedRows === 0) {
                 return res.status(404).json({
-                    message: "Task not found"
+                    message: "Task not found or not yours"
                 });
             }
 

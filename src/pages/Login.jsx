@@ -49,11 +49,19 @@ export default function Login() {
             }
 
             // ⭐ SAVE JWT
-            localStorage.setItem("token", data.token);
+            if (response.ok) {
 
-            console.log("JWT SAVED:", data.token);
+                console.log("LOGIN RESPONSE:", data);
 
-            navigate("/tasks");
+                localStorage.setItem("token", data.token);
+
+                console.log(
+                    "JWT SAVED:",
+                    localStorage.getItem("token")
+                );
+
+                navigate("/tasks");
+            }
 
         } catch (error) {
             console.log("LOGIN ERROR:", error);
