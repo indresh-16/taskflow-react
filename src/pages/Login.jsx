@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-export default function Login() {
+export default function Login({ setIsLoggedIn }) {
     const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
@@ -51,14 +51,14 @@ export default function Login() {
             // ⭐ SAVE JWT
             if (response.ok) {
 
-                console.log("LOGIN RESPONSE:", data);
-
                 localStorage.setItem("token", data.token);
 
                 console.log(
                     "JWT SAVED:",
                     localStorage.getItem("token")
                 );
+
+                setIsLoggedIn(true);
 
                 navigate("/tasks");
             }

@@ -1,5 +1,6 @@
 ﻿import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 import "./App.css";
 
@@ -11,47 +12,38 @@ import Register from "./pages/Register";
 function App() {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState("all");
-
+    const [isLoggedIn, setIsLoggedIn] = useState(
+    Boolean(localStorage.getItem("token"))
+    );
 
 useEffect(() => {
-    const loadTasks = () => {
 
-        const token = localStorage.getItem("token");
+    if (!isLoggedIn) {
+        setTasks([]);
+        return;
+    }
 
-        console.log("TASK TOKEN:", token);
+    const token = localStorage.getItem("token");
 
-        if (!token || token === "null" || token === "undefined") {
-            console.log("No valid JWT. Skipping tasks request.");
-            setTasks([]);
-            return;
+    fetch("http://localhost:5000/tasks", {
+        headers: {
+            Authorization: `Bearer ${token}`
         }
+    })
+    .then(response => response.json())
+    .then(data => {
 
-        fetch("http://localhost:5000/tasks", {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
+        console.log("EXISTING TASKS:", data);
 
-            console.log("TASK RESPONSE:", data);
-
-            if (!Array.isArray(data)) {
-                console.log("TASK ERROR:", data);
-                setTasks([]);
-                return;
-            }
-
+        if (Array.isArray(data)) {
             setTasks(data);
-        })
-        .catch(error => {
-            console.log("GET ERROR:", error);
-            setTasks([]);
-        });
-    };
+        }
+    })
+    .catch(error => {
+        console.log("GET ERROR:", error);
+    });
 
-    loadTasks();
-}, []);
+}, [isLoggedIn]);
 
 function addTask(inputValue) {
 
@@ -173,12 +165,13 @@ function deleTask(taskId) {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn}/>} />
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<Dashboard />} />
         <Route
           path="/tasks"
           element={
+            <ProtectedRoute>
             <Tasks
               addTask={addTask}
               tasks={tasks}
@@ -188,6 +181,7 @@ function deleTask(taskId) {
               filter={filter}
               setFilter={setFilter}
             />
+            </ProtectedRoute>
           }
         />
       </Routes>
