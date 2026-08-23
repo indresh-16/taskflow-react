@@ -60,7 +60,7 @@ export default function Login({ setIsLoggedIn }) {
 
                 setIsLoggedIn(true);
 
-                navigate("/tasks");
+                navigate("/");
             }
 
         } catch (error) {
