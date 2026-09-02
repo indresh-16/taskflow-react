@@ -5,7 +5,9 @@ const app = express();
 
 const authRoutes = require("./routes/authRoutes");
 const taskRoutes = require("./routes/taskRoutes");
-
+app.get("/", (req, res) => {
+  res.send("TaskFlow Backend is Running 🚀");
+});
 app.use(cors());
 app.use(express.json());
 app.use("/", authRoutes);
