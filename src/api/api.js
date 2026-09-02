@@ -1,12 +1,14 @@
-export async function apiRequest(url, options = {}) {
+const API_URL = "https://calm-cat-production-3639.up.railway.app";
+
+export async function apiRequest(endpoint, options = {}) {
   const token = localStorage.getItem("token");
 
-  const response = await fetch(url, {
+  const response = await fetch(`${API_URL}${endpoint}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
       ...options.headers,
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
   });
 
