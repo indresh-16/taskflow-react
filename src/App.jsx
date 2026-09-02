@@ -51,25 +51,31 @@ function App() {
 
   // ADD TASK WITH PRIORITY
   async function addTask(inputValue, priority) {
-    setLoading(true);
-    setError(null);
+  setLoading(true);
+  setError(null);
 
-    try {
-      const data = await apiRequest("https://calm-cat-production-3639.up.railway.app/tasks", {
+  try {
+    const data = await apiRequest(
+      "https://calm-cat-production-3639.up.railway.app/tasks",
+      {
         method: "POST",
         body: JSON.stringify({
           text: inputValue,
           priority: priority,
         }),
-      });
+      }
+    );
 
-      setTasks((prevTasks) => [...prevTasks, data]);
-    } catch (err) {
-      setError("Failed to add task");
-    } finally {
-      setLoading(false);
-    }
+    setTasks((prevTasks) => [...prevTasks, data]);
+
+  } catch (err) {
+    console.error("ADD TASK ERROR:", err);
+    setError(err.message || "Failed to add task");
+
+  } finally {
+    setLoading(false);
   }
+}
 
   // TOGGLE TASK COMPLETION
   async function toggleTask(clickedTask) {
