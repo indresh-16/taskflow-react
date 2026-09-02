@@ -58,72 +58,62 @@ const createTasks = (req, res) => {
 
 const updateTasks = (req, res) => {
     const taskId = req.params.id;
-    const { text, completed } = req.body;
+    const { text, completed, priority } = req.body;
     const userId = req.user.id;
 
-    // Editing task text
+    const updates = [];
+    const values = [];
+
     if (text !== undefined) {
-        db.query(
-            `UPDATE tasks
-             SET text = ?
-             WHERE id = ? AND user_id = ?`,
-            [text.trim(), taskId, userId],
-            (err, result) => {
-                if (err) {
-                    return res.status(500).json({
-                        message: "Failed to update task"
-                    });
-                }
-
-                if (result.affectedRows === 0) {
-                    return res.status(404).json({
-                        message: "Task not found or not yours"
-                    });
-                }
-
-                return res.json({
-                    id: Number(taskId),
-                    text: text.trim(),
-                    message: "Task text updated successfully"
-                });
-            }
-        );
-        return;
+        updates.push("text = ?");
+        values.push(text.trim());
     }
 
-    // Updating completed status
     if (completed !== undefined) {
-        db.query(
-            `UPDATE tasks
-             SET completed = ?
-             WHERE id = ? AND user_id = ?`,
-            [completed, taskId, userId],
-            (err, result) => {
-                if (err) {
-                    return res.status(500).json({
-                        message: "Failed to update task"
-                    });
-                }
-
-                if (result.affectedRows === 0) {
-                    return res.status(404).json({
-                        message: "Task not found or not yours"
-                    });
-                }
-
-                return res.json({
-                    id: Number(taskId),
-                    completed,
-                    message: "Task status updated successfully"
-                });
-            }
-        );
-        return;
+        updates.push("completed = ?");
+        values.push(completed);
     }
 
-    return res.status(400).json({
-        message: "No valid fields to update"
-    });
+    if (priority !== undefined) {
+        updates.push("priority = ?");
+        values.push(priority);
+    }
+
+    if (updates.length === 0) {
+        return res.status(400).json({
+            message: "No valid fields to update"
+        });
+    }
+
+    values.push(taskId, userId);
+
+    db.query(
+        `UPDATE tasks
+         SET ${updates.join(", ")}
+         WHERE id = ? AND user_id = ?`,
+        values,
+        (err, result) => {
+            if (err) {
+                return res.status(500).json({
+                    message: "Failed to update task"
+                });
+            }
+
+            if (result.affectedRows === 0) {
+                return res.status(404).json({
+                    message: "Task not found or not yours"
+                });
+            }
+
+            return res.json({
+                id: Number(taskId),
+                text: text !== undefined ? text.trim() : undefined,
+                completed: completed !== undefined ? completed : undefined,
+                priority: priority !== undefined ? priority : undefined,
+                message: "Task updated successfully"
+            });
+        }
+    );
 };
 
 const deleteTask = (req, res) => {

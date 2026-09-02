@@ -31,7 +31,7 @@ async function login(req, res) {
 
       const token = jwt.sign(
         { id: user.id, email: user.email },
-        process.env.JWT_SECRET,
+        process.env.JWT_SECRET || "my_taskflow_secret_key_160507",
         { expiresIn: "1h" },
       );
 

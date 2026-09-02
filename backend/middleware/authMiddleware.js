@@ -22,7 +22,7 @@ function verifyToken(req, res, next) {
     try {
         const decoded = jwt.verify(
             token,
-            process.env.JWT_SECRET
+            process.env.JWT_SECRET || "my_taskflow_secret_key_160507"
         );
 
         req.user = decoded;
