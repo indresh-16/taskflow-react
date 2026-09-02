@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -35,7 +35,7 @@ function App() {
       setError(null);
 
       try {
-        const data = await apiRequest("http://localhost:5000/tasks");
+        const data = await apiRequest("https://calm-cat-production-3639.up.railway.app/tasks");
         if (Array.isArray(data)) {
           setTasks(data);
         }
@@ -55,7 +55,7 @@ function App() {
     setError(null);
 
     try {
-      const data = await apiRequest("http://localhost:5000/tasks", {
+      const data = await apiRequest("https://calm-cat-production-3639.up.railway.app/tasks", {
         method: "POST",
         body: JSON.stringify({
           text: inputValue,
@@ -79,7 +79,7 @@ function App() {
     setError(null);
 
     try {
-      await apiRequest(`http://localhost:5000/tasks/${clickedTask.id}`, {
+      await apiRequest(`https://calm-cat-production-3639.up.railway.app/tasks/${clickedTask.id}`, {
         method: "PUT",
         body: JSON.stringify({
           completed: newCompleted,
@@ -109,7 +109,7 @@ function App() {
     setError(null);
 
     try {
-      await apiRequest(`http://localhost:5000/tasks/${taskId}`, {
+      await apiRequest(`https://calm-cat-production-3639.up.railway.app/tasks/${taskId}`, {
         method: "PUT",
         body: JSON.stringify({
           text: newText,
@@ -139,7 +139,7 @@ function App() {
     setError(null);
 
     try {
-      await apiRequest(`http://localhost:5000/tasks/${taskId}`, {
+      await apiRequest(`https://calm-cat-production-3639.up.railway.app/tasks/${taskId}`, {
         method: "DELETE",
       });
 
