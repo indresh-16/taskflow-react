@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -35,7 +35,7 @@ function App() {
       setError(null);
 
       try {
-        const data = await apiRequest("https://calm-cat-production-3639.up.railway.app/tasks");
+        const data = await apiRequest("/tasks");
         if (Array.isArray(data)) {
           setTasks(data);
         }
@@ -51,31 +51,26 @@ function App() {
 
   // ADD TASK WITH PRIORITY
   async function addTask(inputValue, priority) {
-  setLoading(true);
-  setError(null);
+    setLoading(true);
+    setError(null);
 
-  try {
-    const data = await apiRequest(
-      "https://calm-cat-production-3639.up.railway.app/tasks",
-      {
+    try {
+      const data = await apiRequest("/tasks", {
         method: "POST",
         body: JSON.stringify({
           text: inputValue,
           priority: priority,
         }),
-      }
-    );
+      });
 
-    setTasks((prevTasks) => [...prevTasks, data]);
-
-  } catch (err) {
-    console.error("ADD TASK ERROR:", err);
-    setError(err.message || "Failed to add task");
-
-  } finally {
-    setLoading(false);
+      setTasks((prevTasks) => [...prevTasks, data]);
+    } catch (err) {
+      console.error("ADD TASK ERROR:", err);
+      setError(err.message || "Failed to add task");
+    } finally {
+      setLoading(false);
+    }
   }
-}
 
   // TOGGLE TASK COMPLETION
   async function toggleTask(clickedTask) {
@@ -85,7 +80,7 @@ function App() {
     setError(null);
 
     try {
-      await apiRequest(`https://calm-cat-production-3639.up.railway.app/tasks/${clickedTask.id}`, {
+      await apiRequest(`/tasks/${clickedTask.id}`, {
         method: "PUT",
         body: JSON.stringify({
           completed: newCompleted,
@@ -96,9 +91,9 @@ function App() {
         prevTasks.map((task) =>
           task.id === clickedTask.id
             ? {
-              ...task,
-              completed: newCompleted,
-            }
+                ...task,
+                completed: newCompleted,
+              }
             : task
         )
       );
@@ -115,7 +110,7 @@ function App() {
     setError(null);
 
     try {
-      await apiRequest(`https://calm-cat-production-3639.up.railway.app/tasks/${taskId}`, {
+      await apiRequest(`/tasks/${taskId}`, {
         method: "PUT",
         body: JSON.stringify({
           text: newText,
@@ -126,9 +121,9 @@ function App() {
         prevTasks.map((task) =>
           task.id === taskId
             ? {
-              ...task,
-              text: newText,
-            }
+                ...task,
+                text: newText,
+              }
             : task
         )
       );
@@ -140,12 +135,12 @@ function App() {
   }
 
   // DELETE TASK
-  async function deleTask(taskId) {
+  async function deleteTask(taskId) {
     setLoading(true);
     setError(null);
 
     try {
-      await apiRequest(`https://calm-cat-production-3639.up.railway.app/tasks/${taskId}`, {
+      await apiRequest(`/tasks/${taskId}`, {
         method: "DELETE",
       });
 
@@ -205,7 +200,7 @@ function App() {
                 addTask={addTask}
                 tasks={tasks}
                 filteredTask={filteredTask}
-                deleTask={deleTask}
+                deleteTask={deleteTask}
                 toggleTask={toggleTask}
                 editTask={editTask}
                 filter={filter}

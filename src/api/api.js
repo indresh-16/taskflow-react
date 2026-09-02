@@ -1,9 +1,18 @@
 const API_URL = "https://calm-cat-production-3639.up.railway.app";
 
+export { API_URL };
+
 export async function apiRequest(endpoint, options = {}) {
   const token = localStorage.getItem("token");
 
-  const response = await fetch(`${API_URL}${endpoint}`, {
+  // Prevent URL concatenation bug if endpoint already includes http/https
+  let url = endpoint;
+  if (!endpoint.startsWith("http://") && !endpoint.startsWith("https://")) {
+    const formattedEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+    url = `${API_URL}${formattedEndpoint}`;
+  }
+
+  const response = await fetch(url, {
     ...options,
     headers: {
       "Content-Type": "application/json",

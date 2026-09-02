@@ -7,7 +7,8 @@ import ThemeToggle from "../components/ThemeToggle";
 export default function Tasks({
   addTask,
   toggleTask,
-  deleTask,
+  deleteTask,
+  deleTask = deleteTask,
   tasks = [],
   filteredTask = [],
   filter,
@@ -137,7 +138,8 @@ export default function Tasks({
         {/* TASK LIST */}
         <TaskList
           tasks={filteredTask}
-          deleTask={deleTask}
+          deleteTask={deleteTask || deleTask}
+          deleTask={deleTask || deleteTask}
           toggleTask={toggleTask}
           filter={filter}
           editTask={editTask}

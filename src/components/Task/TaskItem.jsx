@@ -2,7 +2,8 @@ import { useState } from "react";
 
 export default function TaskItem({
   task,
-  deleTask,
+  deleteTask,
+  deleTask = deleteTask,
   toggleTask,
   editTask,
 }) {
@@ -133,7 +134,7 @@ export default function TaskItem({
             </button>
 
             <button
-              onClick={() => deleTask(task.id)}
+              onClick={() => (deleteTask || deleTask)(task.id)}
               className="px-3.5 py-1.5 bg-red-50 hover:bg-red-100 dark:bg-red-950/50 dark:hover:bg-red-900/60 text-red-600 dark:text-red-300 text-xs md:text-sm font-semibold rounded-lg border border-red-200 dark:border-red-800/60 active:scale-95 transition-all duration-150 cursor-pointer"
             >
               Delete

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ThemeToggle from "../components/ThemeToggle";
+import { API_URL } from "../api/api";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ export default function Register() {
     setLoading(true);
 
     try {
-      const response = await fetch("https://calm-cat-production-3639.up.railway.app/register", {
+      const response = await fetch(`${API_URL}/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

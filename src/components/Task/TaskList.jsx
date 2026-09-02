@@ -2,7 +2,8 @@ import TaskItem from "./TaskItem";
 
 export default function TaskList({
   tasks,
-  deleTask,
+  deleteTask,
+  deleTask = deleteTask,
   toggleTask,
   editTask,
   filter,
@@ -43,7 +44,8 @@ export default function TaskList({
         <TaskItem
           key={task.id}
           task={task}
-          deleTask={deleTask}
+          deleteTask={deleteTask || deleTask}
+          deleTask={deleTask || deleteTask}
           toggleTask={toggleTask}
           editTask={editTask}
         />
